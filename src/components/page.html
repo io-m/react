@@ -1,0 +1,190 @@
+<table className="mainTable">
+    <thead className="header">
+        <tr className="headerTop">
+            <td className="left">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                {
+                                    order.user.enterprise !== null && order.user.enterprise.chain === 'Coop' ? (
+                                        <b>{order.billingCompany + ' - ' + order.user.customerInfo.enterpriseId}</b>
+                                    ) : <b>{order.billingCompany}</b>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {order.billingAddress}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {order.billingPostCode + ' ' + order.billingCity}
+                            </td>
+                        </tr>
+                        <tr><td>&nbsp;</td></tr>
+                        <tr>
+                            <td>
+                                CVR-nr. {order.user.profile.companyId}
+                            </td>
+                        </tr>
+                        <tr><td>&nbsp;</td></tr>
+                    </tbody>
+                </table>
+            </td>
+            <td className="middle">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <b>Leveringsadresse:</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {order.shippingCompany}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {order.shippingAddress}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {order.shippingPostCode + ' ' + order.shippingCity}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {
+                                    order.user.enterprise !== null && order.user.enterprise.chain === 'Coop' ? (
+                                        <div>Kardex: {order.user.customerInfo.enterpriseId}</div>
+                                    ) : <div>&nbsp;</div>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Att: {order.shippingName}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td className="space" />
+            <td className="right">
+                <img src="https://res.cloudinary.com/raahandel/image/upload/v1587540181/assets/logoBlack.svg" alt="" />
+            </td>
+        </tr>
+        <tr className="headerMiddle">
+            <td className="left" colSpan="2">
+                {
+                    order.shippingComment !== null && order.shippingComment.length > 0 ? (
+                        <div>
+                            <b>Leveringskommentar:</b> {order.shippingComment}
+                        </div>
+                    ) : null
+                }
+            </td>
+            <td className="space" />
+            <td className="right">
+                <div className="deliveryNote">FØLGESEDDEL</div>
+            </td>
+        </tr>
+        <tr className="headerBottom">
+            <td className="left" colSpan="2">
+                <div className="orderComment">
+                    {
+                        order.orderLine.some(orderLine => [true].includes(orderLine.cold)) && order.orderLine.some(orderLine => [true].includes(orderLine.frozen)) ? (
+                            <div><b>Ordren indeholder køle- og frostvarer</b></div>
+                        ) : order.orderLine.some(orderLine => [true].includes(orderLine.cold)) ? (
+                            <div><b>Ordren indeholder kølevarer</b></div>
+                        ) : order.orderLine.some(orderLine => [true].includes(orderLine.frozen)) ? (
+                            <div><b>Ordren indeholder frostvarer</b></div>
+                        ) : null
+                    }
+                    {order.orderComment}
+                </div>
+            </td>
+            <td className="space" />
+            <td className="right">
+                <table className="orderDetails">
+                    <tbody>
+                        <tr>
+                            <td className="first">Ordrenr. ..................: {order.handle}</td>
+                        </tr>
+                        <tr>
+                            <td className="spacing">Leveringsdato ........: {dayjs(order.shippingDate).format('DD-MM-YYYY')}</td>
+                        </tr>
+                        <tr>
+                            <td>Kundenr. .................: {order.user.handle}</td>
+                        </tr>
+                        <tr>
+                            <td>Leverandørnr. .........: 43448</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colSpan="4">
+                <table className="bodyMain">
+                    <thead>
+                        <tr>
+                            {
+                                order.user.enterprise !== null && order.user.enterprise.chain === 'Coop' ? (
+                                    <td>Dessin-nr.</td>
+                                ) : null
+                            }
+                            <td>Varenr.</td>
+                            <td>Vare</td>
+                            <td className="center">Antal</td>
+                            <td>Beskrivelse</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            order.orderLine.map(orderLine => 
+                                <tr key={orderLine.id}>
+                                    {
+                                        order.user.enterprise !== null && order.user.enterprise.chain === 'Coop' ? (
+                                            <td>Mangler</td>
+                                        ) : null
+                                    }
+                                    <td>{orderLine.product.handle}</td>
+                                    <td>
+                                        {orderLine.title + ' fra ' + orderLine.product.user.name}
+                                        &nbsp;
+                                        {orderLine.organic ? ("(ØKO)") : null}
+                                        &nbsp;
+                                        {orderLine.cold ? (<b>*KØL*</b>) : orderLine.frozen ? (<b>*FROST*</b>) : null}
+                                    </td>
+                                    <td className="center">{orderLine.quantity}</td>
+                                    <td>{orderLine.bulkSize + ' x ' + formatDecimal(orderLine.unitSize) + ' ' + orderLine.unit}</td>
+                                </tr>
+                            )
+                        }
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot className="footer">
+        <tr>
+            <td className="footerTop" colSpan="4">
+                <div className="govControl">Kontrolmyndighed: DK-ØKO-100</div>
+            </td>
+        </tr>
+        <tr>
+            <td className="footerBottom" colSpan="4">
+                <div><b>Råhandel ApS</b> - Bognæsvej 4 - 4000 Roskilde - CVR-nr. 37405906</div>
+                <div>Tlf.: 28696554 - Mail: bogholderi@raahandel.dk - Web: www.raahandel.dk</div>
+                <div>Bank: Merkur Andelskasse - Kontonr.: 8401/ 1294893 - IBAN-nr.: DK3384010001294893 - SWIFT-kode: MEKUDK21</div>
+            </td>
+        </tr>
+    </tfoot>
+</table>
